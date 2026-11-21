@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FM-приёмник · полная схема пайки</title>
+<style>
+  *{box-sizing:border-box}
+  body{max-width:1100px;margin:30px auto;padding:0 20px;color:#21332e;font:16px/1.5 "Segoe UI",sans-serif}
+  h1,h2{line-height:1.15} h2{margin-top:1.7em}
+  .grid{overflow:auto;background:#f1f7f1;border:1px solid #b6c8bc;border-radius:8px}
+  svg{display:block;width:100%;min-width:820px;height:auto}
+  table{width:100%;border-collapse:collapse}
+  td,th{padding:8px;text-align:left;vertical-align:top;border-bottom:1px solid #cbd8ce}
+  thead{background:#e7f0e9} code{font-size:1em}
+  .scroll{overflow:auto}
+  .alert{background:#fff4df;border-left:4px solid #ad6b22;padding:10px 14px}
+  .chip{display:inline-block;border-left:5px solid var(--ink);padding-left:6px;margin-right:14px}
+  pre{white-space:pre-wrap;background:#e7f0e9;padding:12px}
+  @media (max-width:600px){body{margin:18px auto;padding:0 12px}th,td{min-width:120px}.grid{overscroll-behavior-inline:contain}} @media print{body{margin:0;padding:0;font-size:10pt}.grid{overflow:visible}svg{min-width:0}tr{break-inside:avoid}}
+</style>
+<h1>FM-приёмник · полная схема пайки</h1><nav><a href="layout.html">Раскладка платы</a> · <a href="grid.html">Сетка 53 × 33</a></nav>
+<p class="alert"><b>Перед окончательной пайкой подтверди питание усилителя и выводы своего RRD‑102.</b> Схема ниже рассчитана на Nano V3 с логикой 5 В, двунаправленный преобразователь для I²C и радиомодуль с питанием 3,3 В.</p>
+<p><b>Макетка 150 × 90 мм, сетка 53 × 33.</b> Вид со стороны деталей, USB слева. A1 в верхнем левом углу. Пометь этот угол маркером, чтобы при перевороте платы ориентироваться по тем же отверстиям.</p>
+<p>Подписанные кружки — <b>точки для проводов и выводов конденсаторов</b>. Прямоугольники показывают примерные зоны модулей. Провода между точками можно вести с обратной стороны. Пересечение линий без кружка означает, что провода идут отдельно. Если точка занята штырём модуля с другой функцией, перенеси её на соседнее свободное отверстие вместе со всеми проводами этой точки.</p>
+<div class="grid">
+<svg id="board" viewBox="0 0 980 630" role="img" aria-label="Размещение модулей и цветные перемычки на макетке"></svg>
+</div>
+<p id="legend"></p>
+
+<h2>1. Провода и перемычки</h2>
+<p>У отверстий макетки отдельные площадки. Сделай перечисленные ниже перемычки изолированным проводом, даже когда точки стоят в одном ряду. Где у провода указан контакт модуля, припаивайся по надписи на модуле. Все координаты ниже относятся к макетке.</p>
+<div class="scroll"><table>
+<thead><tr><th>Цепь</th><th>Провода от модулей к макетке</th><th>Перемычки на макетке</th></tr></thead>
+<tbody>
+<tr><th>Питание от USB</th><td>Nano <code>5V</code> → <b>E28</b>. Стабилизатор <code>IN</code> и преобразователь <code>HV</code> → <b>U28</b>. Усилитель <code>Power+</code> → <b>AU28</b>.</td><td><b>E28 ↔ U28 ↔ AU28</b>.</td></tr>
+<tr><th>Земля</th><td>Nano <code>GND</code> → <b>E31</b>. Стабилизатор и преобразователь <code>GND</code> → <b>U31</b>. OLED <code>GND</code> → <b>AC16</b>. Радио №6 <code>GND</code> → <b>AW11</b>. Усилитель <code>Power−</code> → <b>AU31</b>. На усилителе соедини вход <code>G</code> с <code>Power−</code>.</td><td><b>E31 ↔ U31</b>, <b>U31 ↔ AC16 ↔ AW11</b> и отдельный возврат усилителя <b>AU31 ↔ E31</b>.</td></tr>
+<tr><th>3,3 В</th><td>Стабилизатор <code>OUT</code> → <b>U24</b>. Преобразователь <code>LV</code> → <b>AC19</b>. OLED <code>VDD</code> → <b>AC13</b>. Радио №5 <code>VCC</code> → <b>AT11</b>.</td><td><b>U24 ↔ AC19 ↔ AC13 ↔ AT11</b>.</td></tr>
+<tr><th>Данные I²C</th><td>Nano <code>A4</code> → <b>M18</b>, <code>HV1</code> → <b>R18</b>. <code>LV1</code> → <b>Z10</b>, OLED <code>SDA</code> → <b>AG10</b>, радио №1 <code>SDIO</code> → <b>AP10</b>.</td><td><b>M18 ↔ R18</b>. Отдельно <b>Z10 ↔ AG10 ↔ AP10</b>.</td></tr>
+<tr><th>Тактирование I²C</th><td>Nano <code>A5</code> → <b>M20</b>, <code>HV2</code> → <b>R20</b>. <code>LV2</code> → <b>Z12</b>, OLED <code>SCK</code> → <b>AG12</b>, радио №2 <code>SCLK</code> → <b>AP12</b>.</td><td><b>M20 ↔ R20</b>. Отдельно <b>Z12 ↔ AG12 ↔ AP12</b>.</td></tr>
+<tr><th>Звук</th><td>Подтверждённый аудиовыход радио, предварительно №7 → <b>AW14</b>. Вход <code>L</code> усилителя в группе <code>L G R</code> → <b>AY24</b>.</td><td><b>AW14 ↔ AY24</b>. Веди эту перемычку рядом с проводом земли входа, вдали от проводов динамика.</td></tr>
+<tr><th>Антенна</th><td>Радио №10 <code>ANT</code> → <b>AY7</b>. От <b>AY7</b> короткий провод к кольцевому контакту под винтом антенны.</td><td>Один провод к антенне.</td></tr>
+<tr><th>Динамик 8 Ом</th><td><code>Lout+</code> усилителя → плюс динамика. <code>Lout−</code> → минус динамика.</td><td>Оба провода идут прямо от усилителя. Скрути их в пару. Правый выход и вход <code>R</code> остаются свободными.</td></tr>
+</tbody>
+</table></div>
+
+<h2>2. Развязка питания</h2>
+<ul>
+  <li><b>C1 · 100 нФ, маркировка 104.</b> Между <b>AT11</b> и <b>AW11</b>, то есть между 3,3 В и землёй. Ставь близко к площадкам №5 и №6 радиомодуля, с короткими выводами. Полярности нет.</li>
+  <li><b>C2 · 100 мкФ / 16 В.</b> Плюс в <b>AU28</b>, минус с полосой в <b>AU31</b>. Ставь рядом с выходом проводов питания к усилителю. На фото усилителя уже есть электролит 470 мкФ, C2 — дополнительный конденсатор из монтажки.</li>
+  <li><b>Подтяжки I²C.</b> На преобразователе обычно есть резисторы подтяжки. Если на проверяемой стороне их нет и их не даёт другой модуль, поставь по одному резистору 4,7 кОм от SDA и SCL к питанию этой стороны. HV подтягивается к питанию Nano, LV — к 3,3 В. Пробный запуск шины делай на 100 кГц. В покое SDA и SCL должны быть близки к напряжению питания своей стороны.</li>
+  <li><b>Разделение по постоянному току на аудиовходе.</b> Проверь, есть ли на плате усилителя штатный входной конденсатор в цепи <code>L</code>. Если входная развязка отсутствует или устройство входа неизвестно, включи неполярный конденсатор около 1 мкФ последовательно в сигнальный провод от радиомодуля до входа <code>L</code>. Это отдельная деталь, C1 и C2 остаются в цепях питания.</li>
+</ul>
+<p>Для питания возьми свой монтажный провод. Для мелких краевых площадок радиомодуля удобнее короткие тонкие изолированные провода или переходник. На крышку сделай разъёмы на четыре контакта для OLED и на два для динамика. Для антенны оставь разъёмный контакт под винтом.</p>
+
+<h2>3. Ориентация радиомодуля</h2>
+<p>На твоей плате маркировка <b>Ver. 2.0</b>. Ниже ориентир по трассировке близкой ревизии Ver. 2.01. Вид на микросхему, металлический кварц внизу. У опубликованных схем расходятся подписи левого и правого выхода, поэтому аудио проверяется на своей плате.</p>
+<pre>1 SDIO          10 ANT
+2 SCLK           9 свободно
+3 свободно       8 ROUT, свободно
+4 свободно       7 LOUT
+5 VCC 3,3 В      6 GND
+       кварц</pre>
+<p>Если смотришь на сторону с надписью <code>RRD‑102 Ver. 2.0</code> и держишь кварц внизу, ряды меняются местами:</p>
+<pre>10 ANT           1 SDIO
+ 9 свободно      2 SCLK
+ 8 аудио         3 свободно
+ 7 аудио         4 свободно
+ 6 GND           5 VCC 3,3 В
+        кварц</pre>
+<p>До подачи питания сверь свою плату. При отключённом питании проверь, что площадка №6 соединена с землёй микросхемы, а №5 — с её питанием. У самой микросхемы RDA5807M это GND на выводах 1, 3 и 8 и VDD на выводе 7. Если по версии платы есть сомнение, проследи также SDIO, SCLK и аудиовыход. Включив моно в скетче, можно взять один подтверждённый аудиовыход тюнера. <a href="https://briankhuu.com/blog/2015/01/02/reverse-engineering-rrd-102-v2.0-fm-radio-module-with-rds-decoding-capability/">Трассировка платы с обеих сторон</a> · <a href="https://pdf.voron.ua/files/pdf/Modules/RDA5807M.pdf">Даташит RDA5807M</a></p>
+
+<h2>4. Проверка перед включением</h2>
+<ol>
+  <li>С отключённым пауэрбанком прозвони перемычки. Проверь, что между питанием Nano, 3,3 В и GND нет устойчивого короткого замыкания.</li>
+  <li>Оставь усилитель, радио и OLED отключёнными. Подключи пауэрбанк к USB Nano и измерь напряжение на выводе <code>5V</code> Nano и на <code>OUT</code> стабилизатора. Напряжение <code>5V</code> может быть ниже 5 В, поэтому сверь требуемый вход стабилизатора. На выходе нужны около 3,3 В. Сверь питание OLED, затем повтори измерение с подключёнными радио и OLED. Запусти сканер I²C и проверь, что оба модуля отвечают.</li>
+  <li>Сверь допустимое напряжение усилителя по маркировке платы или микросхемы. <code>B50K</code> обозначает потенциометр. Питание усилителя от вывода <code>5V</code> Nano допустимо только после проверки запаса тока USB-цепи этой платы. Если ток неизвестен или питание проседает, используй отдельный 5-вольтовый отвод от того же пауэрбанка <b>до Nano</b>. В этом варианте убери перемычку <b>U28 ↔ AU28</b>, подай плюс отвода на <b>AU28</b> и минус на <b>AU31</b>. Земля остаётся общей. Первое включение делай на малой громкости.</li>
+  <li>В скетче Arduino включи монорежим тюнера и проверь звук. На макетке оставь небольшие петли проводов к крышке, чтобы её можно было приподнять.</li>
+</ol>
+<p class="alert"><b>На <code>VCC</code> радиомодуля подавай только 3,3 В от стабилизатора.</b> Контакт <code>Lout−</code> усилителя подключай только к динамику.</p>
+
+<script>
+const svg = document.querySelector('#board');
+const ns = 'http://www.w3.org/2000/svg';
+const pitch = 16;
+const col = i => i < 26 ? String.fromCharCode(65+i) : String.fromCharCode(64+Math.floor(i/26),65+i%26);
+const xy = address => {
+  const [, letters, row] = /^([A-Z]+)([0-9]+)$/.exec(address);
+  const number = [...letters].reduce((n,c) => n*26+c.charCodeAt(0)-64,0);
+  return [56+(number-1)*pitch,52+(Number(row)-1)*pitch];
+};
+function draw(tag, attrs, label) {
+  const element = document.createElementNS(ns,tag);
+  Object.entries(attrs).forEach(([key,value])=>element.setAttribute(key,value));
+  if (label) element.textContent=label;
+  svg.append(element);
+  return element;
+}
+const zones = [
+  ['A20','P27','Nano · USB слева'],['S23','AA27','Стабилизатор'],
+  ['T13','AA17','HV ↔ LV'],['AR4','AX9','RRD-102'],['AV18','BA23','Жгут усилителя']
+];
+for (const [a,b,label] of zones) {
+  const [x,y]=xy(a), [xx,yy]=xy(b);
+  draw('rect',{x:x-7,y:y-7,width:xx-x+14,height:yy-y+14,rx:4,fill:'#d2e8db'});
+  draw('text',{x,y:y-11,'font-size':13,fill:'#21332e','font-weight':600},label);
+}
+for(let i=0;i<53;i++){
+  const [x]=xy(col(i)+'1');
+  draw('text',{x,y:29,'text-anchor':'middle','font-size':10},col(i));
+  for(let j=1;j<=33;j++){
+    const [,y]=xy(col(i)+j);
+    draw('circle',{cx:x,cy:y,r:2,fill:'#f8fff9',stroke:'#94ad9a','stroke-width':1});
+  }
+}
+for(let j=1;j<=33;j++){
+  const [,y]=xy('A'+j);
+  draw('text',{x:31,y:y+4,'text-anchor':'middle','font-size':11},String(j));
+}
+const nets = [
+  ['GND','#26383e',[['AU31','AU32','E32','E31'],['E31','U31','AE31','AE16','AC16'],['AC16','AV16','AV11','AW11']],['E31','U31','AC16','AW11','AU31']],
+  ['Питание Nano','#c72836',[['E28','U28','AU28']],['E28','U28','AU28']],
+  ['3,3 В','#bd6307',[['U24','AC24','AC19','AB19','AB13','AC13','AT13','AT11']],['U24','AC19','AC13','AT11']],
+  ['SDA','#1562a8',[['M18','R18'],['Z10','AG10','AP10']],['M18','R18','Z10','AG10','AP10']],
+  ['SCL','#278044',[['M20','R20'],['Z12','AG12','AP12']],['M20','R20','Z12','AG12','AP12']],
+  ['Звук','#783f9d',[['AW14','AY14','AY24']],['AW14','AY24']],
+  ['Антенна','#865d34',[],['AY7']]
+];
+for(const [name,ink,paths] of nets){
+  const chip=document.createElement('span');
+  chip.className='chip'; chip.style.setProperty('--ink',ink); chip.textContent=name;
+  document.querySelector('#legend').append(chip);
+  for(const path of paths){
+    const points=path.map(xy).map(point=>point.join(',')).join(' ');
+    draw('polyline',{points,fill:'none',stroke:'#f1f7f1','stroke-width':6,'stroke-linejoin':'round'});
+    draw('polyline',{points,fill:'none',stroke:ink,'stroke-width':3,'stroke-linejoin':'round'});
+  }
+}
+for(const [name,ink,,points] of nets){
+  for(const pad of points){
+    const [x,y]=xy(pad);
+    const terminal=draw('circle',{cx:x,cy:y,r:5,fill:ink,stroke:'white','stroke-width':1});
+    const tip=document.createElementNS(ns,'title');tip.textContent=pad+' · '+name;terminal.append(tip);
+    draw('text',{x,y:y-7,fill:ink,'text-anchor':'middle','font-size':10,'font-weight':700,stroke:'#f1f7f1','stroke-width':2,'paint-order':'stroke'},pad);
+  }
+}
+draw('text',{x:56,y:601,'font-size':13,fill:'#21332e'},'C1 между AT11 и AW11 · C2 между AU28 (+) и AU31 (−)');
+</script>
+</html>
+
